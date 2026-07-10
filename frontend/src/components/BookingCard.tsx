@@ -56,7 +56,7 @@ export default function BookingCard({ listing }: { listing: any }) {
   return (
     <div style={{ border: '1px solid var(--border-color)', borderRadius: '12px', padding: '24px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)', position: 'sticky', top: '100px', backgroundColor: 'white' }}>
       <div style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '20px' }}>
-        ${listing.price_per_night} <span style={{ fontSize: '16px', fontWeight: 'normal', color: 'var(--text-light)' }}>night</span>
+        ₹{listing.price_per_night} <span style={{ fontSize: '16px', fontWeight: 'normal', color: 'var(--text-light)' }}>night</span>
       </div>
       
       <div style={{ border: '1px solid #b0b0b0', borderRadius: '8px', overflow: 'hidden', marginBottom: '15px' }}>
@@ -105,17 +105,17 @@ export default function BookingCard({ listing }: { listing: any }) {
       {checkIn && checkOut && (
         <div style={{ marginTop: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-            <span style={{ textDecoration: 'underline' }}>${listing.price_per_night} x {nights} nights</span>
-            <span>${total}</span>
+            <span style={{ textDecoration: 'underline' }}>₹{listing.price_per_night} x {nights} nights</span>
+            <span>₹{total}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
             <span style={{ textDecoration: 'underline' }}>Airbnb service fee</span>
-            <span>${Math.floor(total * 0.1)}</span>
+            <span>₹{Math.floor(total * 0.1)}</span>
           </div>
           <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', margin: '20px 0' }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
             <span>Total before taxes</span>
-            <span>${total + Math.floor(total * 0.1)}</span>
+            <span>₹{total + Math.floor(total * 0.1)}</span>
           </div>
         </div>
       )}

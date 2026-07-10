@@ -1,70 +1,24 @@
-'use client';
 import Link from 'next/link';
-import { useState } from 'react';
 
 export default function Header() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [guests, setGuests] = useState(0);
-
   return (
     <header style={{ borderBottom: '1px solid var(--border-color)', padding: '20px 0', position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 100 }}>
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link href="/" style={{ color: 'var(--primary)', fontWeight: 'bold', fontSize: '24px' }}>
+        <Link href="/" style={{ color: 'var(--primary)', fontWeight: 'bold', fontSize: '24px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+          {/* SVG Airbnb Logo */}
+          <svg width="30" height="32" viewBox="0 0 32 32" style={{ fill: 'var(--primary)' }}>
+            <path d="M29.24 22.68c-.16-.39-3.11-7.33-7.04-12.02-3.12-3.7-6.22-6.52-6.25-6.55L15.91 4 15.86 4.05C15.83 4.08 12.72 6.9 9.61 10.6 5.68 15.29 2.73 22.23 2.57 22.62c-.67 1.62-.35 3.3.87 4.54 1.13 1.16 2.8 1.5 4.38.9 2.3-.87 5-2.73 8.13-6.53 3.12 3.81 5.82 5.67 8.11 6.54 1.57.6 3.23.27 4.35-.88 1.2-1.24 1.51-2.92.83-4.51zM15.95 21.04c-2.48 2.87-4.66 4.38-6.4 5.04-.98.37-1.92.2-2.58-.48-.68-.69-.87-1.7-.44-2.72.1-.25 2.8-6.66 6.4-10.93C15.54 8.7 18.06 6.32 18.3 6.09c1.92 2.37 4.08 5.3 5.42 8.75-2.07-.35-4.52-.37-7.77-13.8zM26.4 26.6c-.66.68-1.58.85-2.56.49-1.73-.65-3.9-2.15-6.36-4.99 1.4-1.37 2.86-3.15 4.38-5.32 1.43 3.32 3.65 6.27 4.97 7.15.43 1.01.24 2.02-.43 2.67z" />
+          </svg>
           airbnb
         </Link>
-        <div style={{ position: 'relative' }}>
-          <div 
-            onClick={() => setIsSearchOpen(!isSearchOpen)}
-            style={{ border: '1px solid var(--border-color)', borderRadius: '24px', padding: '10px 20px', boxShadow: '0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05)', display: 'flex', gap: '15px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', transition: 'box-shadow 0.2s' }}
-            onMouseOver={(e) => e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.18)'}
-            onMouseOut={(e) => e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05)'}
-          >
-            <span>Anywhere</span>
-            <span style={{ borderLeft: '1px solid var(--border-color)', paddingLeft: '15px' }}>Any week</span>
-            <span style={{ borderLeft: '1px solid var(--border-color)', paddingLeft: '15px', color: guests > 0 ? 'var(--text-dark)' : 'var(--text-light)', fontWeight: guests > 0 ? 'bold' : 'normal' }}>
-              {guests > 0 ? `${guests} guest${guests > 1 ? 's' : ''}` : 'Add guests'}
-            </span>
-          </div>
-          
-          {isSearchOpen && (
-            <div style={{ position: 'absolute', top: '50px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'white', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '20px', width: '300px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', zIndex: 200 }}>
-              <div style={{ marginBottom: '15px' }}>
-                <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Where</div>
-                <input type="text" placeholder="Search destinations" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', outline: 'none' }} />
-              </div>
-              <div style={{ marginBottom: '15px' }}>
-                <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '5px' }}>Who</div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span>Guests</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                    <button onClick={() => setGuests(Math.max(0, guests - 1))} style={{ width: '30px', height: '30px', borderRadius: '50%', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>-</button>
-                    <span>{guests}</span>
-                    <button onClick={() => setGuests(guests + 1)} style={{ width: '30px', height: '30px', borderRadius: '50%', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
-                  </div>
-                </div>
-              </div>
-              <button 
-                onClick={() => setIsSearchOpen(false)}
-                style={{ width: '100%', padding: '10px', borderRadius: '8px', backgroundColor: 'var(--primary)', color: 'white', fontWeight: 'bold' }}>
-                Search
-              </button>
-            </div>
-          )}
-        </div>
-        <div style={{ display: 'flex', gap: '15px', alignItems: 'center', fontSize: '14px', fontWeight: 'bold' }}>
-          <Link href="/host" style={{ padding: '10px', borderRadius: '21px' }}
-             onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--card-hover)'}
-             onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-            Airbnb your home
+        
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Link href="/host" style={{ fontSize: '14px', fontWeight: 'bold', textDecoration: 'underline' }}>
+            Airbnb your place
           </Link>
-          <div style={{ border: '1px solid var(--border-color)', borderRadius: '21px', padding: '5px 5px 5px 12px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
-             onMouseOver={(e) => e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.18)'}
-             onMouseOut={(e) => e.currentTarget.style.boxShadow = 'none'}>
-            <span>☰</span>
-            <div style={{ backgroundColor: 'var(--text-light)', color: 'white', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>U</div>
-          </div>
         </div>
       </div>
     </header>
   );
 }
+

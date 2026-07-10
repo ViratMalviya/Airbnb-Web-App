@@ -47,7 +47,7 @@ export default function ListingCard({ listing }: { listing: any }) {
             {listing.title}
           </p>
           <p style={{ margin: '6px 0 0 0', fontSize: '15px', color: 'var(--text-dark)' }}>
-            <span style={{ fontWeight: 'bold' }}>${listing.price_per_night}</span> night
+            <span style={{ fontWeight: 'bold' }}>₹{listing.price_per_night}</span> night
           </p>
         </div>
       </div>
