@@ -28,12 +28,16 @@ export default function HostDashboard() {
         body: JSON.stringify(formData)
       });
       if (res.ok) {
+        const newListing = await res.json();
+        setListings([newListing, ...listings] as any);
         alert('Listing created successfully!');
         setIsCreating(false);
-        window.location.reload();
+      } else {
+        alert('Failed to create listing. Make sure backend is running.');
       }
     } catch (error) {
       console.error(error);
+      alert('Error connecting to backend.');
     }
   };
 

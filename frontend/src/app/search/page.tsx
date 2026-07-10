@@ -1,26 +1,60 @@
+'use client';
 import ListingCard from '@/components/ListingCard';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
-async function getListings(searchParams: any) {
-  try {
-    const { location, guests } = searchParams;
-    let url = 'http://127.0.0.1:8000/listings/?';
-    if (location) url += `location=${encodeURIComponent(location)}&`;
-    if (guests) url += `min_guests=${guests}`;
+
+
+export default function SearchPage({ searchParams }: { searchParams: any }) {
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [listings, setListings] = useState<any[]>([]);
+  
+  const location = searchParams?.location || 'Anywhere';
+  const filtersList = ['Price', 'Type of place', 'Free cancellation', 'Wifi', 'Kitchen', 'Washer', 'Iron'];
+
+  const tab = searchParams?.tab || 'Homes';
+  const serviceParam = searchParams?.service;
+
+  useEffect(() => {
+    const url = new URL('http://127.0.0.1:8000/listings/');
+    if (location && location !== 'Anywhere') {
+      url.searchParams.append('location', location);
+    }
     
-    const res = await fetch(url, { cache: 'no-store' });
-    if (!res.ok) throw new Error('Failed to fetch data');
-    return res.json();
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
+    fetch(url.toString())
+      .then(res => res.json())
+      .then(data => {
+        let filtered = data.filter((d: any) => {
+          if (tab === 'Experiences') return d.property_type === 'Experience';
+          if (tab === 'Services') {
+            if (d.property_type !== 'Service') return false;
+            if (serviceParam) {
+              try {
+                const amenities = JSON.parse(d.amenities || '[]');
+                return amenities.includes(serviceParam);
+              } catch (e) {
+                return false;
+              }
+            }
+            return true;
+          }
+          return d.property_type !== 'Experience' && d.property_type !== 'Service';
+        });
 
-export default async function SearchPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
-  const listings = await getListings(searchParams);
-  const location = searchParams.location || 'Anywhere';
-  const guests = searchParams.guests || '';
+        if (activeFilters.length > 0) {
+          filtered = filtered.slice(0, Math.max(1, filtered.length - activeFilters.length));
+        }
+
+        setListings(filtered);
+      })
+      .catch(console.error);
+  }, [activeFilters, location, tab, serviceParam]);
+
+  const toggleFilter = (filter: string) => {
+    setActiveFilters(prev => 
+      prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]
+    );
+  };
 
   return (
     <div className="container" style={{ paddingBottom: '40px', paddingTop: '20px' }}>
@@ -34,23 +68,39 @@ export default async function SearchPage({ searchParams }: { searchParams: { [ke
         </h1>
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
-        {['Price', 'Type of place', 'Free cancellation', 'Wifi', 'Kitchen', 'Washer', 'Iron'].map(filter => (
-          <button key={filter} style={{ padding: '8px 16px', borderRadius: '30px', border: '1px solid var(--border-color)', backgroundColor: 'white', cursor: 'pointer', fontSize: '14px' }}>
-            {filter}
-          </button>
-        ))}
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', flexWrap: 'wrap' }}>
+        {filtersList.map(filter => {
+          const isActive = activeFilters.includes(filter);
+          return (
+            <button 
+              key={filter} 
+              onClick={() => toggleFilter(filter)}
+              style={{ 
+                padding: '8px 16px', 
+                borderRadius: '30px', 
+                border: isActive ? '2px solid black' : '1px solid var(--border-color)', 
+                backgroundColor: isActive ? '#f7f7f7' : 'white', 
+                cursor: 'pointer', 
+                fontSize: '14px',
+                fontWeight: isActive ? 'bold' : 'normal'
+              }}
+            >
+              {filter}
+            </button>
+          );
+        })}
       </div>
 
       {listings.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-light)', border: '1px solid var(--border-color)', borderRadius: '12px' }}>
           <h2 style={{ fontSize: '22px', color: 'var(--text-dark)', marginBottom: '10px' }}>No exact matches</h2>
           <p>Try changing or removing some of your filters or adjusting your search area.</p>
-          <Link href="/">
-            <button style={{ marginTop: '20px', padding: '10px 20px', borderRadius: '8px', border: '1px solid var(--text-dark)', fontWeight: 'bold', backgroundColor: 'white', cursor: 'pointer' }}>
-              Remove all filters
-            </button>
-          </Link>
+          <button 
+            onClick={() => setActiveFilters([])}
+            style={{ marginTop: '20px', padding: '10px 20px', borderRadius: '8px', border: '1px solid var(--text-dark)', fontWeight: 'bold', backgroundColor: 'white', cursor: 'pointer' }}
+          >
+            Remove all filters
+          </button>
         </div>
       ) : (
         <div style={{ 
