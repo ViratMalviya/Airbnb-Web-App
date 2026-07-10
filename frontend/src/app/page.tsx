@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [location, setLocation] = useState('India');
@@ -9,9 +10,11 @@ export default function Home() {
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
 
+  const router = useRouter();
+
   const handleSearch = () => {
-    alert(`Searching for properties in ${location} from ${checkIn} to ${checkOut} for ${adults} adults and ${children} children.`);
-    // Here we would typically route to a /search page or fetch results
+    const totalGuests = adults + children;
+    router.push(`/search?location=${encodeURIComponent(location)}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${totalGuests}`);
   };
 
   return (

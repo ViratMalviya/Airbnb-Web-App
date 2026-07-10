@@ -79,11 +79,14 @@ def read_listings(
     skip: int = 0, 
     limit: int = 100, 
     location: Optional[str] = None,
+    min_guests: Optional[int] = None,
     db: Session = Depends(get_db)
 ):
     query = db.query(models.Listing)
     if location:
         query = query.filter(models.Listing.location.ilike(f"%{location}%"))
+    if min_guests:
+        query = query.filter(models.Listing.max_guests >= min_guests)
     listings = query.offset(skip).limit(limit).all()
     return listings
 
@@ -95,8 +98,22 @@ def read_listing(listing_id: str, db: Session = Depends(get_db)):
     return listing
 
 @app.post("/listings/", response_model=schemas.Listing)
-def create_listing(listing: schemas.ListingCreate, host_id: str, db: Session = Depends(get_db)):
+def create_listing(listing: schemas.ListingCreate, host_id: Optional[str] = None, db: Session = Depends(get_db)):
+    if not host_id:
+        host = db.query(models.User).filter(models.User.is_host == True).first()
+        host_id = host.id if host else "mock-host-id"
+    
+    # serialize image URLs and amenities if passed as array
     db_listing = models.Listing(**listing.dict(), host_id=host_id)
+    if isinstance(db_listing.image_urls, list):
+        db_listing.image_urls = json.dumps(db_listing.image_urls)
+    elif not db_listing.image_urls:
+        # Mock image
+        db_listing.image_urls = json.dumps(["https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=800"])
+    
+    if not db_listing.amenities:
+        db_listing.amenities = json.dumps(["Wifi", "Kitchen"])
+        
     db.add(db_listing)
     db.commit()
     db.refresh(db_listing)

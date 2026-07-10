@@ -1,6 +1,15 @@
+'use client';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 export default function Header() {
+  const pathname = usePathname();
+  const isHome = pathname === '/';
+  
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [guests, setGuests] = useState(0);
+
   return (
     <header style={{ borderBottom: '1px solid var(--border-color)', padding: '20px 0', position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 100 }}>
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -12,6 +21,21 @@ export default function Header() {
           airbnb
         </Link>
         
+        {!isHome && (
+          <div style={{ position: 'relative' }}>
+            <div 
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              style={{ border: '1px solid var(--border-color)', borderRadius: '24px', padding: '10px 20px', boxShadow: '0 1px 2px rgba(0,0,0,0.08)', display: 'flex', gap: '15px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
+            >
+              <span>Anywhere</span>
+              <span style={{ borderLeft: '1px solid var(--border-color)', paddingLeft: '15px' }}>Any week</span>
+              <span style={{ borderLeft: '1px solid var(--border-color)', paddingLeft: '15px', color: 'var(--text-light)', fontWeight: 'normal' }}>
+                Add guests
+              </span>
+            </div>
+          </div>
+        )}
+
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Link href="/host" style={{ fontSize: '14px', fontWeight: 'bold', textDecoration: 'underline' }}>
             Airbnb your place
