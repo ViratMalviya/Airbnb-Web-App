@@ -20,10 +20,7 @@ export default async function Home() {
       {/* Categories Row placeholder */}
       <div style={{ display: 'flex', gap: '30px', padding: '20px 0', overflowX: 'auto', borderBottom: '1px solid var(--border-color)', marginBottom: '30px' }}>
         {['Amazing pools', 'Beachfront', 'Cabins', 'OMG!', 'Farms', 'Mansions'].map(cat => (
-          <div key={cat} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer', opacity: 0.6, minWidth: 'max-content' }}
-            onMouseOver={(e) => e.currentTarget.style.opacity = '1'}
-            onMouseOut={(e) => e.currentTarget.style.opacity = '0.6'}
-          >
+          <div key={cat} className="category-item">
             <div style={{ width: '24px', height: '24px', backgroundColor: 'var(--text-dark)', mask: 'url(https://unpkg.com/lucide-static@0.321.0/icons/tent.svg) no-repeat center', WebkitMask: 'url(https://unpkg.com/lucide-static@0.321.0/icons/tent.svg) no-repeat center' }}></div>
             <span style={{ fontSize: '12px', fontWeight: 'bold' }}>{cat}</span>
           </div>
