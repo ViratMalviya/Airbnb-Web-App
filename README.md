@@ -1,5 +1,8 @@
 # Airbnb Clone - Full Stack Web Application
 
+🌍 **Live Application (Frontend)**: [https://airbnb-web-app-chi.vercel.app/](https://airbnb-web-app-chi.vercel.app/)
+⚙️ **Live API (Backend)**: [https://airbnb-web-app-5i40.onrender.com/docs](https://airbnb-web-app-5i40.onrender.com/docs)
+
 This repository contains a full-stack clone of Airbnb, built with modern web technologies. It features a responsive design, dynamic dark mode, real-time search, an interactive host dashboard with image uploads, and a comprehensive booking and review system.
 
 ## 🚀 Tech Stack
