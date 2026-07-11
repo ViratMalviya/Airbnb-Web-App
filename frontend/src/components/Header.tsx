@@ -21,6 +21,8 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [location, setLocation] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isGlobeModalOpen, setIsGlobeModalOpen] = useState(false);
+  const [globeTab, setGlobeTab] = useState('Language and region');
   const { addToast } = useToast();
   const { isDark, toggleTheme } = useTheme();
 
@@ -88,7 +90,7 @@ export default function Header() {
                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
               {isDark ? '☀️' : '🌙'}
             </div>
-            <div style={{ padding: '8px', cursor: 'pointer', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            <div onClick={() => setIsGlobeModalOpen(true)} style={{ padding: '8px', cursor: 'pointer', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--card-hover)'}
                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
               🌐
@@ -210,11 +212,103 @@ export default function Header() {
                    <div style={{ backgroundColor: 'var(--primary)', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>🔍</div>
                  </span>
                </div>
+              </div>
+           )
+         )}
+       </div>
+
+       {/* Globe Modal */}
+       {isGlobeModalOpen && (
+         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setIsGlobeModalOpen(false)}>
+           <div style={{ backgroundColor: 'var(--background)', color: 'var(--text-dark)', padding: '24px 24px 40px', borderRadius: '16px', width: '90%', maxWidth: '1000px', height: '80vh', overflowY: 'auto', boxShadow: '0 8px 28px rgba(0,0,0,0.2)' }} onClick={e => e.stopPropagation()}>
+             
+             {/* Modal Header */}
+             <div style={{ marginBottom: '20px' }}>
+               <button onClick={() => setIsGlobeModalOpen(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', marginBottom: '16px', color: 'var(--text-dark)' }}>✕</button>
+               <div style={{ display: 'flex', gap: '24px', borderBottom: '1px solid var(--border-color)' }}>
+                 <div onClick={() => setGlobeTab('Language and region')} style={{ fontWeight: globeTab === 'Language and region' ? 'bold' : 'normal', paddingBottom: '12px', cursor: 'pointer', borderBottom: globeTab === 'Language and region' ? '2px solid var(--text-dark)' : '2px solid transparent', color: globeTab === 'Language and region' ? 'var(--text-dark)' : 'var(--text-light)' }}>
+                   Language and region
+                 </div>
+                 <div onClick={() => setGlobeTab('Currency')} style={{ fontWeight: globeTab === 'Currency' ? 'bold' : 'normal', paddingBottom: '12px', cursor: 'pointer', borderBottom: globeTab === 'Currency' ? '2px solid var(--text-dark)' : '2px solid transparent', color: globeTab === 'Currency' ? 'var(--text-dark)' : 'var(--text-light)' }}>
+                   Currency
+                 </div>
+               </div>
              </div>
-          )
-        )}
-      </div>
-    </header>
+
+             {/* Modal Content */}
+             {globeTab === 'Language and region' && (
+               <div>
+                 <div style={{ backgroundColor: 'var(--card-hover)', padding: '20px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+                   <div>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold', marginBottom: '4px' }}>
+                       Translation <span style={{ fontSize: '18px' }}>文A</span>
+                     </div>
+                     <div style={{ color: 'var(--text-light)', fontSize: '14px' }}>Automatically translate descriptions and reviews to English.</div>
+                   </div>
+                   <div style={{ width: '48px', height: '28px', backgroundColor: 'var(--text-dark)', borderRadius: '30px', position: 'relative', cursor: 'pointer' }} onClick={() => addToast('Translation toggle coming soon!', 'info')}>
+                     <div style={{ position: 'absolute', top: '2px', right: '2px', width: '24px', height: '24px', backgroundColor: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', color: 'var(--text-dark)' }}>✓</div>
+                   </div>
+                 </div>
+
+                 <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '20px' }}>Suggested languages and regions</h2>
+                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px', marginBottom: '40px' }}>
+                   {[
+                     { lang: 'English', region: 'United States' },
+                     { lang: 'English', region: 'United Kingdom' },
+                     { lang: 'हिन्दी', region: 'भारत' },
+                     { lang: 'मराठी', region: 'भारत' },
+                   ].map((item, i) => (
+                     <div key={i} onClick={() => { addToast('Language feature coming soon!', 'info'); setIsGlobeModalOpen(false); }} style={{ padding: '12px', borderRadius: '8px', cursor: 'pointer' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--card-hover)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                       <div style={{ fontSize: '15px' }}>{item.lang}</div>
+                       <div style={{ fontSize: '13px', color: 'var(--text-light)' }}>{item.region}</div>
+                     </div>
+                   ))}
+                 </div>
+
+                 <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '20px' }}>Choose a language and region</h2>
+                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+                   {[
+                     { lang: 'English', region: 'India' },
+                     { lang: 'Bahasa Indonesia', region: 'Indonesia' },
+                     { lang: 'Dansk', region: 'Danmark' },
+                     { lang: 'Deutsch', region: 'Deutschland' },
+                     { lang: 'English', region: 'Australia' },
+                     { lang: 'English', region: 'Canada' },
+                     { lang: 'Español', region: 'España' },
+                     { lang: 'Español', region: 'Argentina' },
+                   ].map((item, i) => (
+                     <div key={i} onClick={() => { addToast('Language feature coming soon!', 'info'); setIsGlobeModalOpen(false); }} style={{ padding: '12px', borderRadius: '8px', cursor: 'pointer', border: item.lang === 'English' && item.region === 'India' ? '1px solid var(--text-dark)' : '1px solid transparent' }} onMouseOver={(e) => { if(item.region !== 'India') e.currentTarget.style.backgroundColor = 'var(--card-hover)'}} onMouseOut={(e) => { if(item.region !== 'India') e.currentTarget.style.backgroundColor = 'transparent'}}>
+                       <div style={{ fontSize: '15px' }}>{item.lang}</div>
+                       <div style={{ fontSize: '13px', color: 'var(--text-light)' }}>{item.region}</div>
+                     </div>
+                   ))}
+                 </div>
+               </div>
+             )}
+
+             {globeTab === 'Currency' && (
+               <div style={{ padding: '20px 0' }}>
+                 <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '20px' }}>Choose a currency</h2>
+                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+                   {[
+                     { curr: 'Indian rupee', sym: 'INR - ₹' },
+                     { curr: 'United States dollar', sym: 'USD - $' },
+                     { curr: 'Euro', sym: 'EUR - €' },
+                     { curr: 'British pound', sym: 'GBP - £' },
+                   ].map((item, i) => (
+                     <div key={i} onClick={() => { addToast('Currency conversion coming soon!', 'info'); setIsGlobeModalOpen(false); }} style={{ padding: '12px', borderRadius: '8px', cursor: 'pointer', border: item.sym === 'INR - ₹' ? '1px solid var(--text-dark)' : '1px solid transparent' }} onMouseOver={(e) => { if(item.sym !== 'INR - ₹') e.currentTarget.style.backgroundColor = 'var(--card-hover)'}} onMouseOut={(e) => { if(item.sym !== 'INR - ₹') e.currentTarget.style.backgroundColor = 'transparent'}}>
+                       <div style={{ fontSize: '15px' }}>{item.curr}</div>
+                       <div style={{ fontSize: '13px', color: 'var(--text-light)' }}>{item.sym}</div>
+                     </div>
+                   ))}
+                 </div>
+               </div>
+             )}
+             
+           </div>
+         </div>
+       )}
+     </header>
   );
 }
 

@@ -2,14 +2,19 @@
 import ListingCard from '@/components/ListingCard';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 
-
+const InteractiveMap = dynamic(() => import('@/components/InteractiveMap'), {
+  ssr: false,
+  loading: () => <div style={{ height: '100%', width: '100%', backgroundColor: '#f0f0f0', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading Map...</div>
+});
 
 export default function SearchPage({ searchParams }: { searchParams: any }) {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [listings, setListings] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [showMap, setShowMap] = useState(false);
   const limit = 4;
   
   const location = searchParams?.location || 'Anywhere';
@@ -110,6 +115,13 @@ export default function SearchPage({ searchParams }: { searchParams: any }) {
         })}
       </div>
 
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>{listings.length} places to stay</h2>
+        <button onClick={() => setShowMap(!showMap)} style={{ padding: '8px 16px', borderRadius: '30px', backgroundColor: '#222', color: 'white', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+          {showMap ? 'Show list' : 'Show map'} <span style={{ fontSize: '18px' }}>🗺️</span>
+        </button>
+      </div>
+
       {listings.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-light)', border: '1px solid var(--border-color)', borderRadius: '12px' }}>
           <h2 style={{ fontSize: '22px', color: 'var(--text-dark)', marginBottom: '10px' }}>No exact matches</h2>
@@ -123,16 +135,17 @@ export default function SearchPage({ searchParams }: { searchParams: any }) {
         </div>
       ) : (
         <div>
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
-            gap: '24px',
-            rowGap: '40px',
-            marginBottom: '40px'
-          }}>
-            {listings.map((listing: any, i: number) => (
-              <ListingCard key={`${listing.id}-${i}`} listing={listing} />
-            ))}
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <div style={{ flex: showMap ? 1 : '1 1 100%', display: 'grid', gridTemplateColumns: showMap ? 'repeat(auto-fill, minmax(250px, 1fr))' : 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px', rowGap: '40px', marginBottom: '40px' }}>
+              {listings.map((listing: any, i: number) => (
+                <ListingCard key={`${listing.id}-${i}`} listing={listing} />
+              ))}
+            </div>
+            {showMap && (
+              <div style={{ flex: 1, height: 'calc(100vh - 200px)', position: 'sticky', top: '20px' }}>
+                <InteractiveMap listings={listings} />
+              </div>
+            )}
           </div>
           
           {hasMore && (

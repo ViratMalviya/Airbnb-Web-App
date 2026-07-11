@@ -94,7 +94,7 @@ export default function Home() {
             <div style={{ display: 'flex' }}>
               <div style={{ flex: 1, padding: '10px 14px', borderRight: '1px solid #b0b0b0' }}>
                 <div style={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase' }}>Adults</div>
-                <select value={adults} onChange={(e) => setAdults(Number(e.target.value))} style={{ border: 'none', outline: 'none', width: '100%', fontSize: '16px', marginTop: '4px', padding: 0, backgroundColor: 'transparent' }}>
+                <select value={adults} onChange={(e) => setAdults(Number(e.target.value))} style={{ border: 'none', outline: 'none', width: '100%', fontSize: '16px', marginTop: '4px', padding: '0', backgroundColor: 'transparent', cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none', background: 'url("data:image/svg+xml;utf8,<svg fill=%27black%27 height=%2724%27 viewBox=%270 0 24 24%27 width=%2724%27 xmlns=%27http://www.w3.org/2000/svg%27><path d=%27M7 10l5 5 5-5z%27/></svg>") no-repeat right center' }}>
                   {[1, 2, 3, 4, 5, 6].map(num => (
                     <option key={num} value={num}>{num}</option>
                   ))}
@@ -102,7 +102,7 @@ export default function Home() {
               </div>
               <div style={{ flex: 1, padding: '10px 14px' }}>
                 <div style={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase' }}>Children</div>
-                <select value={children} onChange={(e) => setChildren(Number(e.target.value))} style={{ border: 'none', outline: 'none', width: '100%', fontSize: '16px', marginTop: '4px', padding: 0, backgroundColor: 'transparent' }}>
+                <select value={children} onChange={(e) => setChildren(Number(e.target.value))} style={{ border: 'none', outline: 'none', width: '100%', fontSize: '16px', marginTop: '4px', padding: '0', backgroundColor: 'transparent', cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none', background: 'url("data:image/svg+xml;utf8,<svg fill=%27black%27 height=%2724%27 viewBox=%270 0 24 24%27 width=%2724%27 xmlns=%27http://www.w3.org/2000/svg%27><path d=%27M7 10l5 5 5-5z%27/></svg>") no-repeat right center' }}>
                   {[0, 1, 2, 3, 4].map(num => (
                     <option key={num} value={num}>{num}</option>
                   ))}
@@ -122,7 +122,59 @@ export default function Home() {
       {tab === 'Homes' && (
         <>
           {renderRow('Popular homes in North Goa', realHomes.filter(h => h.location.includes('Goa')))}
-          {renderRow('Available in Puducherry this weekend', realHomes.filter(h => h.location.includes('Puducherry')))}
+          
+          {/* Feature Highlights Section */}
+          <div style={{ display: 'flex', gap: '40px', marginBottom: '80px', marginTop: '40px' }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ marginBottom: '16px' }}>
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', height: '32px', width: '32px', fill: 'currentcolor' }}><path d="M16 1c8.284 0 15 6.716 15 15 0 8.284-6.716 15-15 15-8.284 0-15-6.716-15-15C1 7.716 7.716 1 16 1zm0 2c-7.18 0-13 5.82-13 13s5.82 13 13 13 13-5.82 13-13S23.18 3 16 3zm5.293 8.293a1 1 0 0 1 1.414 0l.086.094a1 1 0 0 1-.086 1.32l-7 7a1 1 0 0 1-1.32.086l-.094-.086-3-3a1 1 0 0 1 1.32-1.498l.094.084L15 14.585l6.293-6.292z"></path></svg>
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>Enjoy some flexibility</h3>
+              <p style={{ color: 'var(--text-light)', lineHeight: '1.4' }}>Stays with flexible cancellation make it easy to rebook if your plans change.</p>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ marginBottom: '16px' }}>
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', height: '32px', width: '32px', fill: 'currentcolor' }}><path d="M25 4a2 2 0 0 1 2 2v17a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h18zm0 2H7v17h18V6zM12 11h8v2h-8v-2zm0 4h8v2h-8v-2z"></path></svg>
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>More than 7M active listings</h3>
+              <p style={{ color: 'var(--text-light)', lineHeight: '1.4' }}>Join more than 1 billion guests who've found getaways in over 220 countries and destinations.</p>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ marginBottom: '16px' }}>
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style={{ display: 'block', height: '32px', width: '32px', fill: 'currentcolor' }}><path d="M12 2h8v4h-8V2zm14 1v2h-4v-2h4zM6 3v2H2V3h4zm16 8h8v2h-8v-2zm-6 1v2H2v-2h14zm-4 7h4v4h-4v-4zm14 1v2h-8v-2h8zM8 20v2H2v-2h6z"></path></svg>
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>100+ filters for tailored stays</h3>
+              <p style={{ color: 'var(--text-light)', lineHeight: '1.4' }}>Pick your price range, the number of rooms you want and other key amenities to find the stay that fits your needs.</p>
+            </div>
+          </div>
+
+          {/* Big, small, we have it all Section */}
+          <div style={{ marginBottom: '80px' }}>
+            <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '30px' }}>Big, small, we have it all</h2>
+            <div style={{ display: 'flex', gap: '20px' }}>
+              <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => router.push('/search?property_type=Home')}>
+                <div style={{ position: 'relative', width: '100%', height: '250px', borderRadius: '12px', overflow: 'hidden', marginBottom: '12px' }}>
+                  <Image src="https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=800&q=80" alt="Houses" fill style={{ objectFit: 'cover' }} />
+                </div>
+                <h3 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '4px' }}>Houses <span style={{ fontWeight: 'normal' }}>›</span></h3>
+                <p style={{ color: 'var(--text-light)', fontSize: '14px', lineHeight: '1.4' }}>If you need extra space, get an entire place all to yourself.</p>
+              </div>
+              <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => router.push('/search?property_type=Apartment')}>
+                <div style={{ position: 'relative', width: '100%', height: '250px', borderRadius: '12px', overflow: 'hidden', marginBottom: '12px' }}>
+                  <Image src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80" alt="Flats" fill style={{ objectFit: 'cover' }} />
+                </div>
+                <h3 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '4px' }}>Flats <span style={{ fontWeight: 'normal' }}>›</span></h3>
+                <p style={{ color: 'var(--text-light)', fontSize: '14px', lineHeight: '1.4' }}>Stay in some of the most convenient locations with spaces in shared buildings.</p>
+              </div>
+              <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => router.push('/search?property_type=Room')}>
+                <div style={{ position: 'relative', width: '100%', height: '250px', borderRadius: '12px', overflow: 'hidden', marginBottom: '12px' }}>
+                  <Image src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=800&q=80" alt="Private rooms" fill style={{ objectFit: 'cover' }} />
+                </div>
+                <h3 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '4px' }}>Private rooms <span style={{ fontWeight: 'normal' }}>›</span></h3>
+                <p style={{ color: 'var(--text-light)', fontSize: '14px', lineHeight: '1.4' }}>Enjoy your own sleeping space and share a common area with others.</p>
+              </div>
+            </div>
+          </div>
         </>
       )}
 
