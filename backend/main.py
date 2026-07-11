@@ -33,37 +33,32 @@ def seed_db():
         db.commit()
         db.refresh(host)
         
-        # Create listings
-        amenities = json.dumps(["Wifi", "Kitchen", "Free parking"])
-        images1 = json.dumps(["https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=800"])
-        images2 = json.dumps(["https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&q=80&w=800"])
+        amenities_home = json.dumps(["Wifi", "Kitchen", "Free parking", "AC", "Pool"])
+        amenities_service = json.dumps(["Cleaning", "Maintenance"])
         
-        listing1 = models.Listing(
-            host_id=host.id,
-            title="Cozy Beachfront Cottage",
-            description="A lovely beachfront cottage with beautiful views.",
-            location="Malibu, USA",
-            price_per_night=250.0,
-            property_type="Cottage",
-            amenities=amenities,
-            image_urls=images1,
-            rating=4.9
-        )
+        img1 = json.dumps(["https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=800"])
+        img2 = json.dumps(["https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&q=80&w=800"])
+        img3 = json.dumps(["https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&q=80&w=800"])
+        img4 = json.dumps(["https://images.unsplash.com/photo-1542718144-668dea81ec80?auto=format&fit=crop&q=80&w=800"])
+        img5 = json.dumps(["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80&w=800"])
+        img6 = json.dumps(["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=800"])
+        img7 = json.dumps(["https://images.unsplash.com/photo-1517436073-3b1b1519fce6?auto=format&fit=crop&q=80&w=800"])
         
-        listing2 = models.Listing(
-            host_id=host.id,
-            title="Modern Downtown Loft",
-            description="Experience city life in this spacious loft.",
-            location="New York, USA",
-            price_per_night=150.0,
-            property_type="Apartment",
-            amenities=amenities,
-            image_urls=images2,
-            rating=4.7
-        )
+        listings = [
+            models.Listing(host_id=host.id, title="Cozy Beachfront Cottage", description="A lovely beachfront cottage.", location="Malibu, USA", price_per_night=250.0, property_type="Cottage", amenities=amenities_home, image_urls=img1, rating=4.9),
+            models.Listing(host_id=host.id, title="Modern Downtown Loft", description="Experience city life.", location="New York, USA", price_per_night=150.0, property_type="Apartment", amenities=amenities_home, image_urls=img2, rating=4.7),
+            models.Listing(host_id=host.id, title="Luxury Villa with Pool", description="A beautiful villa with a private pool.", location="Goa, India", price_per_night=300.0, property_type="Villa", amenities=amenities_home, image_urls=img3, rating=4.95),
+            models.Listing(host_id=host.id, title="Historic Heritage Home", description="Stay in a 200-year old heritage home.", location="Jaipur, India", price_per_night=120.0, property_type="House", amenities=amenities_home, image_urls=img4, rating=4.8),
+            models.Listing(host_id=host.id, title="Parisian Apartment with Balcony", description="Wake up to the view of Paris.", location="Paris, France", price_per_night=210.0, property_type="Apartment", amenities=amenities_home, image_urls=img5, rating=4.9),
+            # Experience
+            models.Listing(host_id=host.id, title="Sunset Yoga on the Beach", description="Relaxing yoga session at sunset.", location="Bali, Indonesia", price_per_night=20.0, property_type="Experience", amenities=json.dumps([]), image_urls=img6, rating=5.0),
+            # Service
+            models.Listing(host_id=host.id, title="Professional Deep Cleaning", description="Top-notch cleaning service for your home.", location="Anywhere", price_per_night=100.0, property_type="Service", amenities=amenities_service, image_urls=img7, rating=4.8)
+        ]
         
-        db.add(listing1)
-        db.add(listing2)
+        for l in listings:
+            db.add(l)
+        
         db.commit()
     db.close()
 
