@@ -23,15 +23,15 @@ export default function HostDashboard() {
   const [formData, setFormData] = useState(defaultForm);
 
   useEffect(() => {
-    fetch('https://airbnb-web-app-5140.onrender.com/users/')
+    fetch('https://airbnb-web-app-5i40.onrender.com/users/')
       .then(res => res.json())
       .then(users => {
         const host = users.find((u: any) => u.is_host);
         if (host) {
           setHostId(host.id);
           return Promise.all([
-            fetch(`https://airbnb-web-app-5140.onrender.com/listings/host/${host.id}`).then(r => r.json()),
-            fetch(`https://airbnb-web-app-5140.onrender.com/bookings/host/${host.id}`).then(r => r.json())
+            fetch(`https://airbnb-web-app-5i40.onrender.com/listings/host/${host.id}`).then(r => r.json()),
+            fetch(`https://airbnb-web-app-5i40.onrender.com/bookings/host/${host.id}`).then(r => r.json())
           ]);
         }
         throw new Error("No host found");
@@ -59,8 +59,8 @@ export default function HostDashboard() {
     e.preventDefault();
     try {
       const url = editingId 
-        ? `https://airbnb-web-app-5140.onrender.com/listings/${editingId}`
-        : `https://airbnb-web-app-5140.onrender.com/listings/?host_id=${hostId}`;
+        ? `https://airbnb-web-app-5i40.onrender.com/listings/${editingId}`
+        : `https://airbnb-web-app-5i40.onrender.com/listings/?host_id=${hostId}`;
       const method = editingId ? 'PUT' : 'POST';
       
       const res = await fetch(url, {
@@ -93,7 +93,7 @@ export default function HostDashboard() {
   const handleDelete = async (id: string) => {
     if(!confirm('Are you sure you want to delete this listing?')) return;
     try {
-      const res = await fetch(`https://airbnb-web-app-5140.onrender.com/listings/${id}`, { method: 'DELETE' });
+      const res = await fetch(`https://airbnb-web-app-5i40.onrender.com/listings/${id}`, { method: 'DELETE' });
       if(res.ok) {
         setListings(listings.filter(l => l.id !== id));
         addToast('Listing deleted', 'success');

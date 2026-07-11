@@ -34,7 +34,7 @@ export default function Home() {
   const [realHomes, setRealHomes] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('https://airbnb-web-app-5140.onrender.com/listings/')
+    fetch('https://airbnb-web-app-5i40.onrender.com/listings/')
       .then(res => res.json())
       .then(data => setRealHomes(data))
       .catch(console.error);

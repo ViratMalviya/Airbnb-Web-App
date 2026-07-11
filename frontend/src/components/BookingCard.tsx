@@ -11,7 +11,7 @@ export default function BookingCard({ listing }: { listing: any }) {
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
-    fetch(`https://airbnb-web-app-5140.onrender.com/bookings/listing/${listing.id}`)
+    fetch(`https://airbnb-web-app-5i40.onrender.com/bookings/listing/${listing.id}`)
       .then(res => res.json())
       .then(data => {
          if(Array.isArray(data)) {
@@ -59,11 +59,11 @@ export default function BookingCard({ listing }: { listing: any }) {
       // Assuming her ID is easily found, but actually the backend will accept it. 
       // For now, let's just make the request. We might need a real ID, but the backend requires a guest_id.
       // We can just fetch the first user who is not a host.
-      const usersRes = await fetch('https://airbnb-web-app-5140.onrender.com/users/');
+      const usersRes = await fetch('https://airbnb-web-app-5i40.onrender.com/users/');
       const users = await usersRes.json();
       const guest = users.find((u: any) => !u.is_host);
       
-      const res = await fetch(`https://airbnb-web-app-5140.onrender.com/bookings/?guest_id=${guest.id}`, {
+      const res = await fetch(`https://airbnb-web-app-5i40.onrender.com/bookings/?guest_id=${guest.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
