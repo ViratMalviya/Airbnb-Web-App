@@ -80,6 +80,8 @@ def read_listings(
     limit: int = 100, 
     location: Optional[str] = None,
     min_guests: Optional[int] = None,
+    property_type: Optional[str] = Query(None),
+    amenity: Optional[List[str]] = Query(None),
     db: Session = Depends(get_db)
 ):
     query = db.query(models.Listing)
@@ -87,6 +89,14 @@ def read_listings(
         query = query.filter(models.Listing.location.ilike(f"%{location}%"))
     if min_guests:
         query = query.filter(models.Listing.max_guests >= min_guests)
+    if property_type:
+        if property_type == "Home":
+            query = query.filter(models.Listing.property_type.notin_(["Experience", "Service"]))
+        else:
+            query = query.filter(models.Listing.property_type == property_type)
+    if amenity:
+        for a in amenity:
+            query = query.filter(models.Listing.amenities.ilike(f"%{a}%"))
     listings = query.offset(skip).limit(limit).all()
     return listings
 
@@ -128,6 +138,27 @@ def delete_listing(listing_id: str, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Listing deleted successfully"}
 
+@app.put("/listings/{listing_id}", response_model=schemas.Listing)
+def update_listing(listing_id: str, listing: schemas.ListingCreate, db: Session = Depends(get_db)):
+    db_listing = db.query(models.Listing).filter(models.Listing.id == listing_id).first()
+    if not db_listing:
+        raise HTTPException(status_code=404, detail="Listing not found")
+    
+    update_data = listing.dict(exclude_unset=True)
+    if isinstance(update_data.get('image_urls'), list):
+        update_data['image_urls'] = json.dumps(update_data['image_urls'])
+        
+    for key, value in update_data.items():
+        setattr(db_listing, key, value)
+        
+    db.commit()
+    db.refresh(db_listing)
+    return db_listing
+
+@app.get("/listings/host/{host_id}", response_model=List[schemas.Listing])
+def get_host_listings(host_id: str, db: Session = Depends(get_db)):
+    return db.query(models.Listing).filter(models.Listing.host_id == host_id).all()
+
 # Bookings
 @app.post("/bookings/", response_model=schemas.Booking)
 def create_booking(booking: schemas.BookingCreate, guest_id: str, db: Session = Depends(get_db)):
@@ -151,3 +182,38 @@ def create_booking(booking: schemas.BookingCreate, guest_id: str, db: Session = 
 def get_guest_bookings(guest_id: str, db: Session = Depends(get_db)):
     bookings = db.query(models.Booking).filter(models.Booking.guest_id == guest_id).all()
     return bookings
+
+@app.get("/bookings/listing/{listing_id}", response_model=List[schemas.Booking])
+def get_listing_bookings(listing_id: str, db: Session = Depends(get_db)):
+    bookings = db.query(models.Booking).filter(
+        models.Booking.listing_id == listing_id,
+        models.Booking.status == "Confirmed"
+    ).all()
+    return bookings
+
+@app.get("/bookings/host/{host_id}", response_model=List[schemas.Booking])
+def get_host_bookings(host_id: str, db: Session = Depends(get_db)):
+    # Join bookings with listings to filter by host_id
+    bookings = db.query(models.Booking).join(models.Listing).filter(models.Listing.host_id == host_id).all()
+    return bookings
+
+# Reviews
+@app.post("/reviews/", response_model=schemas.Review)
+def create_review(review: schemas.ReviewCreate, guest_id: str, db: Session = Depends(get_db)):
+    db_review = models.Review(**review.dict(), guest_id=guest_id, created_at=date.today())
+    db.add(db_review)
+    
+    # Update listing average rating
+    listing = db.query(models.Listing).filter(models.Listing.id == review.listing_id).first()
+    if listing:
+        current_reviews = db.query(models.Review).filter(models.Review.listing_id == review.listing_id).all()
+        total_rating = sum(r.rating for r in current_reviews) + review.rating
+        listing.rating = total_rating / (len(current_reviews) + 1)
+        
+    db.commit()
+    db.refresh(db_review)
+    return db_review
+
+@app.get("/reviews/listing/{listing_id}", response_model=List[schemas.Review])
+def get_listing_reviews(listing_id: str, db: Session = Depends(get_db)):
+    return db.query(models.Review).filter(models.Review.listing_id == listing_id).all()

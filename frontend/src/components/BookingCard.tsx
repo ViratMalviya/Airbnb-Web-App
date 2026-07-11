@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function BookingCard({ listing }: { listing: any }) {
   const [checkIn, setCheckIn] = useState('');
@@ -7,6 +7,23 @@ export default function BookingCard({ listing }: { listing: any }) {
   const [guests, setGuests] = useState(1);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [bookedRanges, setBookedRanges] = useState<{start: Date, end: Date}[]>([]);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    fetch(`http://127.0.0.1:8000/bookings/listing/${listing.id}`)
+      .then(res => res.json())
+      .then(data => {
+         if(Array.isArray(data)) {
+           const ranges = data.map((b: any) => ({
+             start: new Date(b.check_in),
+             end: new Date(b.check_out)
+           }));
+           setBookedRanges(ranges);
+         }
+      })
+      .catch(console.error);
+  }, [listing.id]);
 
   const nights = checkIn && checkOut ? Math.max(1, Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 3600 * 24))) : 1;
   const total = listing.price_per_night * nights;
@@ -14,6 +31,24 @@ export default function BookingCard({ listing }: { listing: any }) {
   const handleReserve = async () => {
     if (!checkIn || !checkOut) {
       setMessage('Please select check-in and check-out dates');
+      return;
+    }
+    
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+    
+    if (checkInDate >= checkOutDate) {
+      setMessage('Check-out must be after check-in');
+      return;
+    }
+
+    const isOverlap = bookedRanges.some(range => {
+      // Overlap condition: A starts before B ends, and A ends after B starts
+      return checkInDate < range.end && checkOutDate > range.start;
+    });
+
+    if (isOverlap) {
+      setMessage('Those dates are already booked! Please select another range.');
       return;
     }
     
@@ -45,13 +80,31 @@ export default function BookingCard({ listing }: { listing: any }) {
         throw new Error(error.detail || 'Failed to book');
       }
       
-      setMessage('Booking successful!');
+      setShowSuccess(true);
     } catch (err: any) {
       setMessage(err.message);
     } finally {
       setLoading(false);
     }
   };
+
+  if (showSuccess) {
+    return (
+      <div style={{ border: '1px solid var(--border-color)', borderRadius: '12px', padding: '40px 24px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)', position: 'sticky', top: '100px', backgroundColor: 'white', textAlign: 'center' }}>
+        <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: '#4CAF50', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', margin: '0 auto 20px' }}>
+          ✓
+        </div>
+        <h2 style={{ fontSize: '24px', marginBottom: '10px' }}>You're all set!</h2>
+        <p style={{ color: 'var(--text-light)', marginBottom: '30px', lineHeight: '1.5' }}>Your reservation for {nights} night{nights > 1 ? 's' : ''} in {listing.location} is confirmed.</p>
+        <button 
+          onClick={() => window.location.href = '/trips'}
+          style={{ width: '100%', padding: '14px', borderRadius: '8px', backgroundColor: 'var(--text-dark)', color: 'white', fontWeight: 'bold', fontSize: '16px', border: 'none', cursor: 'pointer' }}
+        >
+          View My Trips
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div style={{ border: '1px solid var(--border-color)', borderRadius: '12px', padding: '24px', boxShadow: '0 6px 16px rgba(0,0,0,0.12)', position: 'sticky', top: '100px', backgroundColor: 'white' }}>

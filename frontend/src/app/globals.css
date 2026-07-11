@@ -6,6 +6,20 @@
   --border-color: #dddddd;
   --background: #ffffff;
   --card-hover: rgba(0,0,0,0.03);
+  --header-bg: rgba(255, 255, 255, 0.8);
+  --dropdown-bg: #ffffff;
+  --dropdown-hover: #f7f7f7;
+}
+
+.dark {
+  --text-dark: #f7f7f7;
+  --text-light: #a0a0a0;
+  --border-color: #333333;
+  --background: #111111;
+  --card-hover: rgba(255,255,255,0.05);
+  --header-bg: rgba(17, 17, 17, 0.8);
+  --dropdown-bg: #222222;
+  --dropdown-hover: #333333;
 }
 
 * {
@@ -19,6 +33,7 @@ body {
   color: var(--text-dark);
   background-color: var(--background);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 a {
@@ -39,7 +54,7 @@ button {
 
 /* Animations & Effects */
 .glass-effect {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--header-bg);
   backdrop-filter: blur(10px);
 }
 

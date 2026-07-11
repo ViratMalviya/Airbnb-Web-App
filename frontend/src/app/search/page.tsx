@@ -8,9 +8,12 @@ import { useState, useEffect } from 'react';
 export default function SearchPage({ searchParams }: { searchParams: any }) {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [listings, setListings] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const limit = 4;
   
   const location = searchParams?.location || 'Anywhere';
-  const filtersList = ['Price', 'Type of place', 'Free cancellation', 'Wifi', 'Kitchen', 'Washer', 'Iron'];
+  const filtersList = ['Wifi', 'Kitchen', 'Pool', 'AC', 'Free parking', 'Washer', 'Iron'];
 
   const tab = searchParams?.tab || 'Homes';
   const serviceParam = searchParams?.service;
@@ -21,39 +24,55 @@ export default function SearchPage({ searchParams }: { searchParams: any }) {
       url.searchParams.append('location', location);
     }
     
+    // Add skip and limit
+    url.searchParams.append('skip', ((page - 1) * limit).toString());
+    url.searchParams.append('limit', (limit + 1).toString());
+    
+    // Add property_type filter based on tab
+    if (tab === 'Experiences') {
+      url.searchParams.append('property_type', 'Experience');
+    } else if (tab === 'Services') {
+      url.searchParams.append('property_type', 'Service');
+      if (serviceParam) {
+        url.searchParams.append('amenity', serviceParam);
+      }
+    } else {
+      url.searchParams.append('property_type', 'Home');
+    }
+
+    // Add amenities filters
+    const validAmenities = ['Wifi', 'Kitchen', 'Pool', 'AC', 'Free parking', 'Washer', 'Iron'];
+    activeFilters.forEach(f => {
+      if (validAmenities.includes(f)) {
+        url.searchParams.append('amenity', f);
+      }
+    });
+    
     fetch(url.toString())
       .then(res => res.json())
       .then(data => {
-        let filtered = data.filter((d: any) => {
-          if (tab === 'Experiences') return d.property_type === 'Experience';
-          if (tab === 'Services') {
-            if (d.property_type !== 'Service') return false;
-            if (serviceParam) {
-              try {
-                const amenities = JSON.parse(d.amenities || '[]');
-                return amenities.includes(serviceParam);
-              } catch (e) {
-                return false;
-              }
-            }
-            return true;
-          }
-          return d.property_type !== 'Experience' && d.property_type !== 'Service';
-        });
+        const more = data.length > limit;
+        setHasMore(more);
+        const results = more ? data.slice(0, limit) : data;
 
-        if (activeFilters.length > 0) {
-          filtered = filtered.slice(0, Math.max(1, filtered.length - activeFilters.length));
+        if (page === 1) {
+          setListings(results);
+        } else {
+          setListings(prev => {
+            const existingIds = new Set(prev.map((l: any) => l.id));
+            const newResults = results.filter((l: any) => !existingIds.has(l.id));
+            return [...prev, ...newResults];
+          });
         }
-
-        setListings(filtered);
       })
       .catch(console.error);
-  }, [activeFilters, location, tab, serviceParam]);
+  }, [activeFilters, location, tab, serviceParam, page]);
 
   const toggleFilter = (filter: string) => {
     setActiveFilters(prev => 
       prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]
     );
+    setPage(1); // Reset to page 1 on filter change
   };
 
   return (
@@ -103,15 +122,42 @@ export default function SearchPage({ searchParams }: { searchParams: any }) {
           </button>
         </div>
       ) : (
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
-          gap: '24px',
-          rowGap: '40px'
-        }}>
-          {listings.map((listing: any) => (
-            <ListingCard key={listing.id} listing={listing} />
-          ))}
+        <div>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
+            gap: '24px',
+            rowGap: '40px',
+            marginBottom: '40px'
+          }}>
+            {listings.map((listing: any, i: number) => (
+              <ListingCard key={`${listing.id}-${i}`} listing={listing} />
+            ))}
+          </div>
+          
+          {hasMore && (
+            <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '60px' }}>
+              <p style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '16px' }}>Continue exploring {tab.toLowerCase()}</p>
+              <button 
+                onClick={() => setPage(p => p + 1)}
+                style={{
+                  padding: '14px 24px',
+                  backgroundColor: '#222',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'black'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#222'}
+              >
+                Show more
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

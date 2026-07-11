@@ -14,6 +14,7 @@ class User(Base):
 
     listings = relationship("Listing", back_populates="host")
     bookings = relationship("Booking", back_populates="guest")
+    reviews = relationship("Review", back_populates="guest")
 
 class Listing(Base):
     __tablename__ = "listings"
@@ -31,6 +32,7 @@ class Listing(Base):
 
     host = relationship("User", back_populates="listings")
     bookings = relationship("Booking", back_populates="listing")
+    reviews = relationship("Review", back_populates="listing")
 
 class Booking(Base):
     __tablename__ = "bookings"
@@ -46,3 +48,16 @@ class Booking(Base):
 
     listing = relationship("Listing", back_populates="bookings")
     guest = relationship("User", back_populates="bookings")
+
+class Review(Base):
+    __tablename__ = "reviews"
+
+    id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
+    listing_id = Column(String, ForeignKey("listings.id"))
+    guest_id = Column(String, ForeignKey("users.id"))
+    rating = Column(Integer)
+    comment = Column(Text)
+    created_at = Column(Date)
+
+    listing = relationship("Listing", back_populates="reviews")
+    guest = relationship("User", back_populates="reviews")

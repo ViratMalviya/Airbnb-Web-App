@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Header from '@/components/Header';
+import { ToastProvider } from '@/context/ToastContext';
+import { WishlistProvider } from '@/context/WishlistContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 export const metadata: Metadata = {
   title: 'Airbnb Clone',
@@ -15,8 +18,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Header />
-        <main>{children}</main>
+        <ThemeProvider>
+          <ToastProvider>
+            <WishlistProvider>
+              <Header />
+              <main>{children}</main>
+            </WishlistProvider>
+          </ToastProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

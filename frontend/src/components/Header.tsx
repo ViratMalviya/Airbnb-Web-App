@@ -2,6 +2,8 @@
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { useToast } from '@/context/ToastContext';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function Header() {
   const pathname = usePathname();
@@ -18,6 +20,9 @@ export default function Header() {
   
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [location, setLocation] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { addToast } = useToast();
+  const { isDark, toggleTheme } = useTheme();
 
   const handleSearch = () => {
     setIsSearchOpen(false);
@@ -68,18 +73,28 @@ export default function Header() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <Link href="/host" style={{ fontSize: '14px', fontWeight: 'bold', padding: '10px 15px', borderRadius: '30px', cursor: 'pointer' }}
-               onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--card-hover)'}
-               onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-              Become a host
+          <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+            <Link href="/trips" style={{ fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', textDecoration: 'none', color: 'inherit' }}>
+              Trips
             </Link>
-            <div style={{ padding: '10px', borderRadius: '50%', cursor: 'pointer' }}
-               onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--card-hover)'}
-               onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+            <Link href="/wishlists" style={{ fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', textDecoration: 'none', color: 'var(--text-color)' }}>
+              Wishlists
+            </Link>
+            <Link href="/host" style={{ fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', textDecoration: 'none', color: 'var(--text-color)' }}>
+              Airbnb your home
+            </Link>
+            <div onClick={toggleTheme} style={{ padding: '8px', cursor: 'pointer', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--card-hover)'}
+                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+              {isDark ? '☀️' : '🌙'}
+            </div>
+            <div style={{ padding: '8px', cursor: 'pointer', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--card-hover)'}
+                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
               🌐
             </div>
-            <div style={{ border: '1px solid var(--border-color)', borderRadius: '30px', padding: '5px 5px 5px 12px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+            <div style={{ border: '1px solid var(--border-color)', borderRadius: '30px', padding: '5px 5px 5px 12px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', position: 'relative' }}
+               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                onMouseOver={(e) => e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.18)'}
                onMouseOut={(e) => e.currentTarget.style.boxShadow = 'none'}>
               <span>☰</span>
@@ -88,6 +103,31 @@ export default function Header() {
                   <path d="M16 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm-8.8 19.3A12 12 0 1 1 24.8 23.3l-2.4-3.5c-1.8 1.4-4.1 2.2-6.4 2.2-2.4 0-4.6-.8-6.4-2.2l-2.4 3.5z"></path>
                 </svg>
               </div>
+              
+              {isDropdownOpen && (
+                <div style={{ position: 'absolute', top: '100%', right: '0', marginTop: '10px', backgroundColor: 'var(--dropdown-bg)', borderRadius: '12px', boxShadow: 'var(--card-shadow)', minWidth: '240px', padding: '10px 0', zIndex: 100 }}>
+                  <Link href="/trips" style={{ display: 'block', padding: '12px 20px', fontWeight: 'bold', textDecoration: 'none', color: 'inherit', cursor: 'pointer' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--dropdown-hover)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                    Trips
+                  </Link>
+                  <Link href="/wishlists" style={{ display: 'block', padding: '12px 20px', fontWeight: 'bold', textDecoration: 'none', color: 'inherit', cursor: 'pointer' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--dropdown-hover)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                    Wishlists
+                  </Link>
+                  <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid var(--border-color)' }} />
+                  <Link href="/host" style={{ display: 'block', padding: '12px 20px', textDecoration: 'none', color: 'inherit', cursor: 'pointer' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--dropdown-hover)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                    Airbnb your home
+                  </Link>
+                  <div onClick={() => { addToast('Identity Verification coming soon!', 'info'); setIsDropdownOpen(false); }} style={{ display: 'block', padding: '12px 20px', textDecoration: 'none', color: 'inherit', cursor: 'pointer' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--dropdown-hover)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                    Verify Identity
+                  </div>
+                  <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid var(--border-color)' }} />
+                  <div style={{ padding: '12px 20px', cursor: 'pointer' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--dropdown-hover)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                    Help Center
+                  </div>
+                  <div style={{ padding: '12px 20px', cursor: 'pointer' }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--dropdown-hover)'} onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                    Log out
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -54,3 +54,19 @@ class Booking(BookingBase):
 
     class Config:
         orm_mode = True
+
+class ReviewBase(BaseModel):
+    listing_id: str
+    rating: int
+    comment: str
+
+class ReviewCreate(ReviewBase):
+    pass
+
+class Review(ReviewBase):
+    id: str
+    guest_id: str
+    created_at: date
+
+    class Config:
+        orm_mode = True
