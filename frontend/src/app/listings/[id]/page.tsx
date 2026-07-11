@@ -4,7 +4,7 @@ import { ContactHostButton, MapPlaceholder } from '@/components/ClientPlaceholde
 
 async function getListing(id: string) {
   try {
-    const res = await fetch(`http://127.0.0.1:8000/listings/${id}`, { next: { revalidate: 0 } });
+    const res = await fetch(`https://airbnb-web-app-5140.onrender.com/listings/${id}`, { next: { revalidate: 0 } });
     if (!res.ok) throw new Error('Failed to fetch listing');
     return res.json();
   } catch (error) {
@@ -15,7 +15,7 @@ async function getListing(id: string) {
 
 async function getHost(hostId: string) {
   try {
-    const res = await fetch(`http://127.0.0.1:8000/users/`, { next: { revalidate: 0 } });
+    const res = await fetch(`https://airbnb-web-app-5140.onrender.com/users/`, { next: { revalidate: 0 } });
     if (!res.ok) return null;
     const users = await res.json();
     return users.find((u: any) => u.id === hostId) || null;

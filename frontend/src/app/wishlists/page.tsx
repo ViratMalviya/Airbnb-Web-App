@@ -15,7 +15,7 @@ export default function WishlistsPage() {
     }
     
     // Fetch all listings and filter on frontend for simplicity
-    fetch('http://127.0.0.1:8000/listings/')
+    fetch('https://airbnb-web-app-5140.onrender.com/listings/')
       .then(res => res.json())
       .then(data => {
         const favoritedListings = data.filter((l: any) => favorites.includes(l.id));

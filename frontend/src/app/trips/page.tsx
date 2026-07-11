@@ -13,19 +13,19 @@ export default function TripsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/users/')
+    fetch('https://airbnb-web-app-5140.onrender.com/users/')
       .then(res => res.json())
       .then(users => {
         const guest = users.find((u: any) => !u.is_host);
         if (guest) {
-          return fetch(`http://127.0.0.1:8000/bookings/guest/${guest.id}`);
+          return fetch(`https://airbnb-web-app-5140.onrender.com/bookings/guest/${guest.id}`);
         }
         throw new Error("No guest found");
       })
       .then(res => res.json())
       .then(async data => {
         const enriched = await Promise.all(data.map(async (b: any) => {
-          const lRes = await fetch(`http://127.0.0.1:8000/listings/${b.listing_id}`);
+          const lRes = await fetch(`https://airbnb-web-app-5140.onrender.com/listings/${b.listing_id}`);
           const listing = await lRes.json();
           return { ...b, listing };
         }));
@@ -42,7 +42,7 @@ export default function TripsPage() {
   const submitReview = async () => {
     try {
       const guestId = reviewingBooking.guest_id;
-      const res = await fetch(`http://127.0.0.1:8000/reviews/?guest_id=${guestId}`, {
+      const res = await fetch(`https://airbnb-web-app-5140.onrender.com/reviews/?guest_id=${guestId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

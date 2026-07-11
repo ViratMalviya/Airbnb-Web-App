@@ -24,7 +24,7 @@ export default function SearchPage({ searchParams }: { searchParams: any }) {
   const serviceParam = searchParams?.service;
 
   useEffect(() => {
-    const url = new URL('http://127.0.0.1:8000/listings/');
+    const url = new URL('https://airbnb-web-app-5140.onrender.com/listings/');
     if (location && location !== 'Anywhere') {
       url.searchParams.append('location', location);
     }
